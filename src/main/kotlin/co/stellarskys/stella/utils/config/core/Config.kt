@@ -69,7 +69,7 @@ class Config(
     }
 
     // UI builders
-    private class ConfigUI(categories: Map<String, ConfigCategory>, config: Config): VexelScreen("Config") {
+    private class ConfigUI(categories: Map<String, ConfigCategory>, val config: Config): VexelScreen("Config") {
         private var selectedCategory = categories.entries.firstOrNull()?.value
         private val elementContainers = mutableMapOf<String, VexelElement<*>>()
         private val elementRefs = mutableMapOf<String, ConfigElement>()
@@ -181,6 +181,11 @@ class Config(
             }
 
             NVGRenderer.beginFrame(0f,0f)
+        }
+
+        override fun onCloseGui() {
+            super.onCloseGui()
+            config.save()
         }
 
         private fun buildCategory(root: VexelElement<*>, window: VexelWindow, category: ConfigCategory, config: Config) {

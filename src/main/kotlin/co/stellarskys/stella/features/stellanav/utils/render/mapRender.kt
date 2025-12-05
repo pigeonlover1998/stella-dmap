@@ -2,6 +2,7 @@ package co.stellarskys.stella.features.stellanav.utils.render
 
 import co.stellarskys.stella.features.stellanav.utils.mapConfig
 import co.stellarskys.stella.features.stellanav.utils.mapConfig.mapInfoUnder
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.textShadow
 import co.stellarskys.stella.features.stellanav.utils.prevewMap
 import co.stellarskys.stella.utils.render.Render2D
 import co.stellarskys.stella.utils.render.Render2D.width
@@ -75,8 +76,8 @@ object mapRender {
         matrix.translate(138f / 2f, 135f)
         matrix.scale(0.6f, 0.6f)
 
-        Render2D.drawString(context, mapLine1, -w1 / 2, 0)
-        Render2D.drawString(context, mapLine2, -w2 / 2, 10)
+        Render2D.drawString(context, mapLine1, -w1 / 2, 0, shadow = textShadow)
+        Render2D.drawString(context, mapLine2, -w2 / 2, 10, shadow = textShadow)
 
         matrix.popMatrix()
     }

@@ -1,6 +1,7 @@
 package co.stellarskys.stella.features.stellanav.utils
 
 import co.stellarskys.stella.Stella
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.textShadow
 import co.stellarskys.stella.utils.render.Render2D
 import co.stellarskys.stella.utils.render.Render2D.width
 import co.stellarskys.stella.utils.skyblock.dungeons.utils.Checkmark
@@ -152,12 +153,12 @@ fun renderNametag(context: GuiGraphics, name: String, scale: Float) {
     for ((dx, dy) in offsets) {
         matrix.pushMatrix()
         matrix.translate(dx, dy)
-        Render2D.drawString(context, "§0$name", drawX, drawY)
+        Render2D.drawString(context, "§0$name", drawX, drawY, shadow = textShadow)
         matrix.popMatrix()
     }
 
 
-    Render2D.drawString(context, name, drawX, drawY)
+    Render2D.drawString(context, name, drawX, drawY, shadow = textShadow)
     matrix.popMatrix()
 }
 

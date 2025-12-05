@@ -1,5 +1,7 @@
 package co.stellarskys.stella.utils
 
+import java.awt.Color
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 object Utils {
@@ -53,5 +55,9 @@ object Utils {
         }
 
         return total
+    }
+
+    fun Color.darken(factor: Float): Color {
+        return Color((red * factor).roundToInt(), (green * factor).roundToInt(), (blue * factor).roundToInt(), alpha)
     }
 }

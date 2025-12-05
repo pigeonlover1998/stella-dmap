@@ -346,6 +346,20 @@ val config = Config("Stella", "Stella") {
                 default = 1f
             }
 
+            toggle {
+                configName = "textShadow"
+                name = "Text Shadow"
+                description = "Render room text shadow"
+                default = true
+            }
+
+            toggle {
+                configName = "softShadow"
+                name = "Soft Shadow" // this thing ain't soft man?
+                description = "Render text with soft shadow"
+                default = true
+            }
+
             slider {
                 configName = "pcsize"
                 name = "Puzzle Text"
@@ -446,6 +460,15 @@ val config = Config("Stella", "Stella") {
                 configName = "entranceRoomColor"
                 name = "Entrance"
                 default = rgba(20, 133, 0, 255)
+            }
+
+            slider {
+                configName = "darkenMultiplier"
+                name = "Darken Multiplier"
+                description = "How much to darken undiscovered rooms"
+                min = 0.1f
+                max = 2f
+                default = 0.4f
             }
         }
 

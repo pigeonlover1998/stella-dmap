@@ -1,6 +1,10 @@
 package co.stellarskys.stella.features.stellanav.utils.render
 
 import co.stellarskys.stella.features.stellanav.utils.*
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.darkenMultiplier
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.textShadow
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.softShadow
+import co.stellarskys.stella.utils.Utils.darken
 import co.stellarskys.stella.utils.render.Render2D
 import co.stellarskys.stella.utils.render.Render2D.width
 import co.stellarskys.stella.utils.skyblock.dungeons.Dungeon
@@ -8,7 +12,6 @@ import co.stellarskys.stella.utils.skyblock.dungeons.map.Room
 import co.stellarskys.stella.utils.skyblock.dungeons.players.DungeonPlayer
 import co.stellarskys.stella.utils.skyblock.dungeons.players.DungeonPlayerManager
 import co.stellarskys.stella.utils.skyblock.dungeons.utils.Checkmark
-import co.stellarskys.stella.utils.skyblock.dungeons.utils.DoorState
 import co.stellarskys.stella.utils.skyblock.dungeons.utils.DoorType
 import co.stellarskys.stella.utils.skyblock.dungeons.utils.RoomType
 import net.minecraft.client.gui.GuiGraphics
@@ -56,6 +59,14 @@ object clear {
             )
         }
 
+        Dungeon.rooms.forEach { room ->
+            val color = roomTypeColors[room?.type] ?: return@forEach
+            room?.components?.forEach { (x, z) ->
+                Render2D.drawRect(context, x * spacing, z * spacing, roomSize, roomSize, color.darken(1 - darkenMultiplier))
+            }
+            room?.let { renderRoomConnectors(context, it, roomTypeColors[it.type]?.darken(1 - darkenMultiplier)) }
+        }
+
         Dungeon.uniqueRooms.forEach { room ->
             if (!room.explored) return@forEach
             val color = roomTypeColors[room.type] ?: return@forEach
@@ -65,8 +76,9 @@ object clear {
             renderRoomConnectors(context, room)
         }
 
-        Dungeon.uniqueDoors.forEach { door ->
-            if (door.state != DoorState.DISCOVERED) return@forEach
+        Dungeon.doors.forEach { door ->
+            val door = door ?: return@forEach
+//            if (door.state != DoorState.DISCOVERED) return@forEach // tf is the point of discovered/undiscovered if it does notting? todo fix
             val type = if (door.opened) DoorType.NORMAL else door.type
             val color = doorTypeColors[type] ?: return@forEach
             val (cx, cy) = door.getComp().let { it.first / 2 * spacing to it.second / 2 * spacing }
@@ -81,15 +93,15 @@ object clear {
     fun renderCheckmarks(context: GuiGraphics) {
         val scale = mapConfig.checkmarkScale
 
-        Dungeon.discoveredRooms.values.forEach { room ->
-            val x = room.x * spacing + roomSize / 2 - 5
-            val y = room.z * spacing + roomSize / 2 - 6
-            context.withMatrix {
-                context.pose().translate(x.toFloat(), y.toFloat())
-                context.pose().scale(scale, scale)
-                Render2D.drawImage(context, questionMark, 0, 0, 10, 12)
-            }
-        }
+//        Dungeon.discoveredRooms.values.forEach { room ->
+//            val x = room.x * spacing + roomSize / 2 - 5
+//            val y = room.z * spacing + roomSize / 2 - 6
+//            context.withMatrix {
+//                context.pose().translate(x.toFloat(), y.toFloat())
+//                context.pose().scale(scale, scale)
+//                Render2D.drawImage(context, questionMark, 0, 0, 10, 12)
+//            }
+//        }
 
         Dungeon.uniqueRooms.forEach { room ->
             if (!room.explored) return@forEach
@@ -116,7 +128,7 @@ object clear {
     /** Renders room names and secret counts */
     fun renderRoomLabels(context: GuiGraphics, type: RoomType, checkmarkMode: Int, scaleFactor: Float) {
         Dungeon.uniqueRooms.forEach { room ->
-            if (!room.explored || room.type != type || checkmarkMode < 1) return@forEach
+            if (room.type != type || checkmarkMode < 1) return@forEach
 
             val secrets = if (room.checkmark == Checkmark.GREEN) room.secrets else room.secretsFound
             val textColor = getTextColor(room.checkmark)
@@ -141,8 +153,8 @@ object clear {
                     val ly = (9 * i - (lines.size * 9) / 2).toFloat()
                     val drawX = (-line.width() / 2).toInt()
                     val drawY = ly.toInt()
-                    drawShadowedText(context, line, drawX, drawY, scale)
-                    Render2D.drawString(context, textColor + line, drawX, drawY)
+                    if (softShadow) drawShadowedText(context, line, drawX, drawY, scale)
+                    Render2D.drawString(context, textColor + line, drawX, drawY, shadow = textShadow)
                 }
             }
         }
@@ -174,7 +186,7 @@ object clear {
     }
 
     /** Renders connectors between adjacent room components */
-    fun renderRoomConnectors(context: GuiGraphics, room: Room) {
+    fun renderRoomConnectors(context: GuiGraphics, room: Room, colour: Color? = roomTypeColors[room.type]) {
         val directions = listOf(Pair(1, 0), Pair(-1, 0), Pair(0, 1), Pair(0, -1))
 
         for ((x, z) in room.components) {
@@ -191,7 +203,7 @@ object clear {
                 val drawX = if (isVertical) cx else cx + roomSize
                 val drawY = if (isVertical) cy + roomSize else cy
 
-                Render2D.drawRect(context, drawX, drawY, w, h, roomTypeColors[room.type] ?: Color.GRAY)
+                Render2D.drawRect(context, drawX, drawY, w, h, colour ?: Color.GRAY)
             }
         }
 
@@ -199,7 +211,7 @@ object clear {
         if (room.components.size == 4 && room.shape == "2x2") {
             val x = room.components[0].first * spacing + roomSize
             val y = room.components[0].second * spacing + roomSize
-            Render2D.drawRect(context, x, y, gapSize, gapSize, roomTypeColors[room.type] ?: Color.GRAY)
+            Render2D.drawRect(context, x, y, gapSize, gapSize, colour ?: Color.GRAY)
         }
     }
 

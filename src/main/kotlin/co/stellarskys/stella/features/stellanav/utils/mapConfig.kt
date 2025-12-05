@@ -11,6 +11,8 @@ object mapConfig {
     val checkmarkScale: Float get() = config["checkmarkScale"] as? Float ?: 1f
     val roomCheckmarks: Int get() = config["roomCheckmarks"] as? Int ?: 0
     val rcsize: Float get() = config["rcsize"] as? Float ?: 1f
+    val textShadow: Boolean get() = config["textShadow"] as? Boolean ?: true
+    val softShadow: Boolean get() = config["softShadow"] as? Boolean ?: true
     val puzzleCheckmarks: Int get() = config["puzzleCheckmarks"] as? Int ?: 0
     val pcsize: Float get() = config["pcsize"] as? Float ?: 1f
 
@@ -28,6 +30,7 @@ object mapConfig {
     val BloodColor: Color get() = (config["bloodRoomColor"] as? RGBA)?.toColor() ?: Color(255, 0, 0, 255)
     val FairyColor: Color get() = (config["fairyRoomColor"] as? RGBA)?.toColor() ?: Color(224, 0, 255, 255)
     val EntranceColor: Color get() = (config["entranceRoomColor"] as? RGBA)?.toColor() ?: Color(20, 133, 0, 255)
+    val darkenMultiplier: Float get() = config["darkenMultiplier"] as? Float ?: 0.4f
 
     val NormalDoorColor: Color get() = (config["normalDoorColor"] as? RGBA)?.toColor() ?: Color(80, 40, 10, 255)
     val WitherDoorColor: Color get() = (config["witherDoorColor"] as? RGBA)?.toColor() ?: Color(0, 0, 0, 255)

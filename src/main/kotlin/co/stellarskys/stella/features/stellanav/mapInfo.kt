@@ -3,6 +3,7 @@ package co.stellarskys.stella.features.stellanav
 import co.stellarskys.stella.annotations.Module
 import co.stellarskys.stella.events.core.GuiEvent
 import co.stellarskys.stella.features.Feature
+import co.stellarskys.stella.features.stellanav.utils.mapConfig.textShadow
 import co.stellarskys.stella.hud.HUDManager
 import co.stellarskys.stella.utils.render.*
 import co.stellarskys.stella.utils.render.Render2D.width
@@ -59,8 +60,8 @@ object mapInfo: Feature("separateMapInfo", island = SkyBlockIsland.THE_CATACOMBS
         matrix.pushMatrix()
         matrix.translate( 100f, 5f,)
 
-        Render2D.drawString(context, mapLine1,-w1 / 2, 0)
-        Render2D.drawString(context, mapLine2,-w2 / 2, 10)
+        Render2D.drawString(context, mapLine1,-w1 / 2, 0, shadow = textShadow)
+        Render2D.drawString(context, mapLine2,-w2 / 2, 10, shadow = textShadow)
 
         matrix.popMatrix()
     }

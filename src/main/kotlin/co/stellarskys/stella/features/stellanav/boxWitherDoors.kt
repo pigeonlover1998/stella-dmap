@@ -1,16 +1,14 @@
 package co.stellarskys.stella.features.stellanav
 
-import co.stellarskys.stella.Stella
 import co.stellarskys.stella.annotations.Module
 import co.stellarskys.stella.events.core.ChatEvent
 import co.stellarskys.stella.events.core.RenderEvent
 import co.stellarskys.stella.features.Feature
 import co.stellarskys.stella.features.stellanav.utils.mapConfig
-import co.stellarskys.stella.utils.render.Render3D
-import co.stellarskys.stella.utils.skyblock.dungeons.utils.DoorState
-import co.stellarskys.stella.utils.skyblock.dungeons.utils.DoorType
-import co.stellarskys.stella.utils.skyblock.dungeons.Dungeon
 import co.stellarskys.stella.utils.clearCodes
+import co.stellarskys.stella.utils.render.Render3D
+import co.stellarskys.stella.utils.skyblock.dungeons.Dungeon
+import co.stellarskys.stella.utils.skyblock.dungeons.utils.DoorType
 import co.stellarskys.stella.utils.skyblock.location.SkyBlockIsland
 
 @Module
@@ -53,7 +51,7 @@ object boxWitherDoors: Feature("boxWitherDoors", island = SkyBlockIsland.THE_CAT
 
             Dungeon.doors.forEach { door ->
                 if (door == null) return@forEach
-                if (door.state != DoorState.DISCOVERED) return@forEach
+//                if (door.state != DoorState.DISCOVERED) return@forEach
                 if (door.type == DoorType.BLOOD && door.opened) return@forEach
                 if (door.type !in setOf(DoorType.WITHER, DoorType.BLOOD)) return@forEach
 
