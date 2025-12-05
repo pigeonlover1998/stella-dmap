@@ -387,6 +387,13 @@ val config = Config("Stella", "Stella") {
                 default = false
             }
 
+            toggle {
+                configName = "showOwnHead"
+                name = "Show own head"
+                description = "Use player head instead of map markers for you"
+                default = false
+            }
+
             slider {
                 configName = "iconBorderWidth"
                 name = "Border Width"

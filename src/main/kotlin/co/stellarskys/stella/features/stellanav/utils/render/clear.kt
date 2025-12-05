@@ -39,8 +39,7 @@ object clear {
 
         renderRooms(context)
         renderCheckmarks(context)
-        renderRoomLabels(context, RoomType.PUZZLE, mapConfig.puzzleCheckmarks, mapConfig.pcsize)
-        renderRoomLabels(context, RoomType.NORMAL, mapConfig.roomCheckmarks, mapConfig.rcsize)
+        renderRoomLabels(context)
         renderPlayers(context)
 
         matrix.popMatrix()
@@ -126,9 +125,17 @@ object clear {
     }
 
     /** Renders room names and secret counts */
-    fun renderRoomLabels(context: GuiGraphics, type: RoomType, checkmarkMode: Int, scaleFactor: Float) {
+    fun renderRoomLabels(context: GuiGraphics) {
+        val typeSettings: Map<RoomType, Pair<Float, Int>> = mapOf(
+            RoomType.PUZZLE to (mapConfig.pcsize to mapConfig.puzzleCheckmarks),
+            RoomType.NORMAL to (mapConfig.rcsize to mapConfig.roomCheckmarks),
+            RoomType.YELLOW to (mapConfig.rcsize to mapConfig.roomCheckmarks),
+            RoomType.BLOOD to (mapConfig.rcsize to mapConfig.roomCheckmarks)
+        )
+
         Dungeon.uniqueRooms.forEach { room ->
-            if (room.type != type || checkmarkMode < 1) return@forEach
+            val (scaleFactor, checkmarkMode) = typeSettings[room.type] ?: return@forEach
+            if (checkmarkMode < 1) return@forEach
 
             val secrets = if (room.checkmark == Checkmark.GREEN) room.secrets else room.secretsFound
             val textColor = getTextColor(room.checkmark)
@@ -260,15 +267,16 @@ object clear {
             matrix.rotate((rotation * (PI / 180)).toFloat())
             matrix.scale(mapConfig.iconScale, mapConfig.iconScale)
 
-            if (mapConfig.showPlayerHead) {
+            if (!mapConfig.showOwnHead && player.name == KnitPlayer.player?.name?.string) {
+                Render2D.drawImage(context, GreenMarker, -4, -5, 7, 10)
+            } else if (mapConfig.showPlayerHead) {
                 val borderColor =
                     if (mapConfig.iconClassColors) getClassColor(player.dclass.displayName) else mapConfig.iconBorderColor
                 Render2D.drawRect(context, -6, -6, 12, 12, borderColor)
                 matrix.scale(1f - mapConfig.iconBorderWidth, 1f - mapConfig.iconBorderWidth)
                 Render2D.drawPlayerHead(context, -6, -6, 12, player.uuid ?: UUID(0, 0))
             } else {
-                val head = if (player.name == KnitPlayer.player?.name?.string) GreenMarker else WhiteMarker
-                Render2D.drawImage(context, head, -4, -5, 7, 10)
+                Render2D.drawImage(context, WhiteMarker, -4, -5, 7, 10)
             }
         }
     }
