@@ -1,11 +1,11 @@
 package co.stellarskys.stella.utils.skyblock.dungeons
 
-import co.stellarskys.stella.Stella
 import co.stellarskys.stella.annotations.Module
 import co.stellarskys.stella.events.EventBus
 import co.stellarskys.stella.events.core.ChatEvent
 import co.stellarskys.stella.events.core.DungeonEvent
 import co.stellarskys.stella.events.core.LocationEvent
+import co.stellarskys.stella.events.core.PacketEvent
 import co.stellarskys.stella.events.core.TickEvent
 import co.stellarskys.stella.utils.*
 import co.stellarskys.stella.utils.skyblock.dungeons.map.*
@@ -13,6 +13,7 @@ import co.stellarskys.stella.utils.skyblock.dungeons.players.DungeonPlayerManage
 import co.stellarskys.stella.utils.skyblock.dungeons.score.*
 import co.stellarskys.stella.utils.skyblock.dungeons.utils.*
 import co.stellarskys.stella.utils.skyblock.location.SkyBlockIsland
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.find
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 import xyz.meowing.knit.api.KnitPlayer
@@ -66,8 +67,22 @@ object Dungeon {
 
     /** Initializes all dungeon systems and event listeners */
     init {
-        EventBus.registerIn<LocationEvent.AreaChange>(SkyBlockIsland.THE_CATACOMBS) { event ->
-            DUNGEON_FLOOR_PATTERN.find(event.new.name, "floor") { (f) ->
+//        EventBus.registerIn<LocationEvent.IslandChange> (SkyBlockIsland.THE_CATACOMBS) { event ->
+//            val name = event.new?.name ?: return@registerIn
+//            println(name)
+//            DUNGEON_FLOOR_PATTERN.find(name, "floor") { (f) ->
+//                floor = DungeonFloor.getByName(f)
+//                floor?.let { EventBus.post(DungeonEvent.Enter(it)) }
+//            }
+//        }
+
+        EventBus.register<PacketEvent.Received> { event ->
+            if (event.packet !is ClientboundSetPlayerTeamPacket) return@register
+            val team = event.packet.parameters?.orElse(null) ?: return@register
+
+            val text = team.playerPrefix?.string?.plus(team.playerSuffix?.string) ?: return@register
+
+            DUNGEON_FLOOR_PATTERN.find(text, "floor") { (f) ->
                 floor = DungeonFloor.getByName(f)
                 floor?.let { EventBus.post(DungeonEvent.Enter(it)) }
             }
